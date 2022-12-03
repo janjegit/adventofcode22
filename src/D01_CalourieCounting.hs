@@ -1,4 +1,4 @@
-module CalourieCounting where
+module D01_CalourieCounting where
 import Data.List
 import Data.List.Split
 import System.Environment
