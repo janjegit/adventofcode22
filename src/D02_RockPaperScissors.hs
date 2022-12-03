@@ -7,7 +7,7 @@ data Shape = Rock | Paper | Scissors
     deriving (Show, Eq, Ord)
 
 data Result = Win | Draw | Lose
-    deriving Show
+    deriving (Show, Eq)
 
 class Score a where
     getScore :: a -> Int
@@ -38,13 +38,15 @@ vs opponent you | opponent == Paper    && you == Scissors = Win
                 | otherwise = Draw
 -}
 
-decode :: Char -> Shape
-decode 'A' = Rock
-decode 'B' = Paper
-decode 'C' = Scissors
-decode 'X' = Rock
-decode 'Y' = Paper
-decode 'Z' = Scissors
+decodeShape :: Char -> Shape
+decodeShape c | c == 'A' = Rock
+              | c == 'B' = Paper
+              | otherwise = Scissors
+
+decodeResult :: Char -> Result
+decodeResult c | c == 'X' = Lose 
+               | c == 'Y' = Draw
+               | otherwise = Win 
 
 totalScore :: [(Char,Char)] -> Int
 totalScore [] = 0
@@ -53,11 +55,30 @@ totalScore xs = sum (map turnScore xs)
 turnScore :: (Char,Char) -> Int
 turnScore (a,b) = resultScore + shapeScore
     where
-        opposingShape = decode a
-        playerShape   = decode b
+        opposingShape = decodeShape a
+        desiredResult = decodeResult b
+        playerShape   = chooseShape opposingShape desiredResult
         resultScore   = getScore (opposingShape `vs` playerShape)
         shapeScore    = getScore playerShape
-    
+
+chooseShape :: Shape -> Result -> Shape
+chooseShape s desiredResult | desiredResult == Win  = chooseforWin s
+                            | desiredResult == Lose = chooseforLose s
+                            | otherwise             = chooseforDraw s
+
+chooseforWin :: Shape -> Shape
+chooseforWin opposingShape | opposingShape == Rock     = Paper
+                           | opposingShape == Scissors = Rock
+                           | otherwise                 = Scissors
+
+chooseforLose :: Shape -> Shape
+chooseforLose opposingShape | opposingShape == Paper    = Rock
+                            | opposingShape == Rock     = Scissors
+                            | otherwise                 = Paper
+
+chooseforDraw :: Shape -> Shape
+chooseforDraw opposingShape = opposingShape
+
 scoreStratGuide :: IO ()
 scoreStratGuide = do
     raw <- readFile "input/strategy_guide.txt"
@@ -65,4 +86,4 @@ scoreStratGuide = do
     print (totalScore guide)
 
 toChars :: String -> [(Char,Char)]  
-toChars s = map (\(x:y:z:xs) -> (x,z)) (lines s)
+toChars s = map (\(x:_:z:_) -> (x,z)) (lines s)
