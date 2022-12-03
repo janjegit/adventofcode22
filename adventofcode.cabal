@@ -8,6 +8,7 @@ executable adventofcode
     -- Modules included in this executable, other than Main.
     other-modules: D01_CalourieCounting
                    D02_RockPaperScissors
+                   D03_RucksackReorg
 
     -- LANGUAGE extensions used by modules in this package.
     default-extensions: TemplateHaskell
