@@ -31,4 +31,3 @@ checkMarker len str = check 0 "" str
                 less   = length (x:r) < len
                 eq     = length (x:r) == len
                 unique = hasUnique (x:r) 
-
