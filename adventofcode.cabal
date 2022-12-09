@@ -11,6 +11,7 @@ executable adventofcode
                    D03_RucksackReorg
                    D04_CampCleanup
                    D05_SupplyStacks
+                   D06_TuningTrouble
 
     -- LANGUAGE extensions used by modules in this package.
     default-extensions: TemplateHaskell

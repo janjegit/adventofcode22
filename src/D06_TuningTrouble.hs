@@ -9,8 +9,10 @@ solve :: IO ()
 solve = do
     uinput <- readFile path
     let bufferlst = lines uinput
-    let markers = map checkMarker bufferlst
-    print markers
+    let packetMark = map (\s -> (checkMarker 4 s)) bufferlst
+    let msgMark = map (\s -> (checkMarker 14 s)) bufferlst
+    print packetMark
+    print msgMark 
 
 hasUnique :: [Char] -> Bool
 hasUnique xs = length xs == length (uniqueElems xs)
@@ -18,15 +20,15 @@ hasUnique xs = length xs == length (uniqueElems xs)
         uniqueElems [] = []
         uniqueElems (y:ys) = y:uniqueElems (filter ((/=) y) ys)
 
-checkMarker :: [Char] -> Int
-checkMarker str = check 0 "" str
+checkMarker :: Int -> [Char] -> Int
+checkMarker len str = check 0 "" str
     where 
         check n _ "" = n
         check n r (x:xs) | less && unique = check (n+1) (x:r) xs
                          | eq && unique = (n+1)
                          | otherwise = check (n+1) (init (x:r)) xs
             where 
-                less   = length (x:r) < 4
-                eq     = length (x:r) == 4
+                less   = length (x:r) < len
+                eq     = length (x:r) == len
                 unique = hasUnique (x:r) 
 
